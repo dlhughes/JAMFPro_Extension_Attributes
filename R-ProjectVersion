@@ -1,0 +1,14 @@
+#!/bin/bash
+  
+PLUGINPATH="/Library/Frameworks/R.framework/"
+ 
+# Plugin version
+S_VERSION=$( /usr/bin/defaults read "${PLUGINPATH}/Resources/info.plist" CFBundleVersion 2>/dev/null )
+ 
+if [[ -e "${PLUGINPATH}" ]]; then
+        EA_RESULT="${S_VERSION}"
+else
+    EA_RESULT="Not installed"
+fi
+ 
+echo "<result>${EA_RESULT}</result>"
