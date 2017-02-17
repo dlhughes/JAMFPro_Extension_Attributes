@@ -1,0 +1,10 @@
+#!/bin/bash
+javaDirectory=/Library/Java/JavaVirtualMachines/1.6.0.jdk
+JVER="Not Installed"
+if [[ -d  "$javaDirectory" ]] ; then
+
+    JVER=$( /usr/bin/defaults read "$javaDirectory/Contents/Info" JavaVM | /usr/bin/grep 'JVMVersion' | /usr/bin/tr '=[:space:]',';' ' ' | /usr/bin/tr -d '"' | /usr/bin/awk '{print $2}' 2>/dev/null )
+	echo "<result>$JVER</result>"
+else
+	echo "<result>$JVER</result>"
+fi
