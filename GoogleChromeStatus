@@ -1,0 +1,44 @@
+#!/bin/bash
+# Version packaged by autoPKG
+autopkgVersion="56.0.2924.87"
+jssVersion=${autopkgVersion//.}
+appname="Google Chrome.app"
+
+# Version installed on Computer if present
+if [ -d /Applications/"$appname" ]; then
+	readVersion=$( /usr/bin/defaults read /Applications/"$appname"/Contents/Info.plist CFBundleShortVersionString  2>/dev/null )
+	installedVersion=${readVersion//.}
+else 
+	/bin/echo "<result>Not Installed</result>"
+	exit 0
+fi
+
+# Pull out major and minor versions. 
+betaInstalledVersion=${installedVersion:0:2}
+betaJssVersion=${jssVersion:0:2}
+majorJssVersion=${jssVersion:2:5}
+majorInstalledVersion=${installedVersion:2:5}
+minorJssVersion=${jssVersion:7}
+minorInstalledVersion=${installedVersion:7}
+
+# First check against the major version, than minor.
+if [ "$betaJssVersion" -gt "$betaInstalledVersion" ]; then
+	/bin/echo "<result>Needs Update</result>"
+elif [ "$betaInstalledVersion" -gt "$betaJssVersion" ]; then
+	/bin/echo "<result>Beta Install</result>"
+elif [ "$betaInstalledVersion" == "$betaJssVersion" ]; then
+	if [ "$majorJssVersion" -gt "$majorInstalledVersion" ]; then
+		/bin/echo "<result>Needs Update</result>"
+	elif [ "$majorInstalledVersion" -gt "$majorJssVersion" ]; then
+		/bin/echo "<result>Up to date</result>"
+	elif [ "$majorJssVersion" == "$majorInstalledVersion" ]; then
+		if [ "$minorJssVersion" -gt "$minorInstalledVersion" ]; then
+		/bin/echo "<result>Needs Update</result>"
+		elif [ "$minorJssVersion" == "$minorInstalledVersion" ]; then
+		/bin/echo "<result>Up to date</result>"
+		elif [ "$minorInstalledVersion" -gt "$minorJssVersion" ]; then
+		/bin/echo "<result>Up to date</result>"
+		fi
+	fi
+fi
+exit 0
