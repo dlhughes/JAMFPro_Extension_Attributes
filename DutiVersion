@@ -1,0 +1,16 @@
+#!/bin/bash
+
+#Assign plist location and parameter to check with condition for empty feild set.
+PLIST=/Library/Application\ Support/UMN/Preferences/edu.umn.oit.selfheal
+version=$(/usr/bin/defaults read "$PLIST" dutiInstalledVersion 2>/dev/null)
+
+#Check feild in plist file and return results.
+if [ -z "$version" ]
+then 
+	echo "<result>Not Installed</result>"
+
+else
+	echo "<result>$version</result>"
+fi
+
+exit
