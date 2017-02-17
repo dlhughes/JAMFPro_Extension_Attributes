@@ -1,0 +1,38 @@
+#!/bin/bash
+# Generic EA for tracking a minimum version when dealing with systems that are hands off management. Patching is only performed by admins in critical situations and left to end users otherwise.
+# This is also useful in situations like Chrome when you wish to allow automatic updates and keep the production version from installing overtop of newer versions than what you've tested for.
+# Version packaged by autoPKG
+# Version number format will likely differ from below. 
+autopkgVersion="0.00.0.000"
+jssVersion=${autopkgVersion//.}
+# Add the intended application name.
+appname="AppName.app"
+
+# Version installed on Computer if present
+if [ -d /Applications/"$appname" ]; then
+	readVersion=$( /usr/bin/defaults read /Applications/"$appname"/Contents/Info.plist CFBundleShortVersionString  2>/dev/null )
+	installedVersion=${readVersion//.}
+else 
+	/bin/echo "<result>Not Installed</result>"
+	exit 0
+fi
+
+# Pull out major and minor versions. Depending on the wayout of the version numbers these will need to be changed.
+majorInstalledVersion=${installedVersion:0:1}
+majorJssVersion=${jssVersion:0:1}
+minorJssVersion=${jssVersion:1:2}
+minorInstalledVersion=${installedVersion:1:2}
+
+# First check against the major version, than minor.
+if [ "$majorJssVersion" -gt "$majorInstalledVersion" ]; then
+	/bin/echo "<result>Needs Update</result>"
+elif [ "$majorInstalledVersion" == "$majorJssVersion" ]; then
+	if [ "$minorJssVersion" -gt "$minorInstalledVersion" ]; then
+		/bin/echo "<result>Needs Update</result>"
+	elif [ "$minorInstalledVersion" -gt "$minorJssVersion" ]; then
+		/bin/echo "<result>Up to date</result>"
+	elif [ "$minorJssVersion" == "$minorInstalledVersion" ]; then
+		/bin/echo "<result>Up to date</result>"
+	fi
+fi
+exit 0
